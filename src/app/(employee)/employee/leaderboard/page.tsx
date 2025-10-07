@@ -1,18 +1,44 @@
+'use client';
 import { Card, CardContent } from "@/components/ui/card";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
+import { AppLayout } from "@/components/AppLayout";
+import { currentEmployee } from "@/lib/data";
+import type { User } from "@/lib/types";
+import {
+  LayoutDashboard,
+  Trophy,
+  Gift,
+  Settings,
+} from "lucide-react";
+
+const employeeNavItems = [
+  { href: "/employee/dashboard", icon: <LayoutDashboard />, label: "Dashboard" },
+  { href: "/employee/leaderboard", icon: <Trophy />, label: "Leaderboard" },
+  { href: "/employee/redeem", icon: <Gift />, label: "Redeem Rewards" },
+];
+
+const employeeSecondaryNavItems = [
+    { href: "#", icon: <Settings />, label: "Settings" },
+];
 
 export default function LeaderboardPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="font-headline text-3xl font-bold tracking-tight">Leaderboard</h2>
-        <p className="text-muted-foreground">See how you stack up against your peers.</p>
+    <AppLayout
+      user={currentEmployee as User}
+      navItems={employeeNavItems}
+      secondaryNavItems={employeeSecondaryNavItems}
+    >
+      <div className="space-y-6">
+        <div>
+          <h2 className="font-headline text-3xl font-bold tracking-tight">Leaderboard</h2>
+          <p className="text-muted-foreground">See how you stack up against your peers.</p>
+        </div>
+        <Card>
+          <CardContent className="p-0">
+            <LeaderboardTable />
+          </CardContent>
+        </Card>
       </div>
-      <Card>
-        <CardContent className="p-0">
-          <LeaderboardTable />
-        </CardContent>
-      </Card>
-    </div>
+    </AppLayout>
   );
 }

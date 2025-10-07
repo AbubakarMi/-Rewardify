@@ -1,3 +1,4 @@
+'use client';
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { rewards as allRewards, users } from "@/lib/data";
@@ -6,6 +7,30 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Reward } from "@/lib/types";
 import { format } from "date-fns";
 import { Award, Gift, Star } from "lucide-react";
+import { AppLayout } from "@/components/AppLayout";
+import { currentUser } from "@/lib/data";
+import type { User } from "@/lib/types";
+import {
+  LayoutDashboard,
+  Users as UsersIcon,
+  Award as AwardIcon,
+  Trophy,
+  History as HistoryIcon,
+  Settings,
+} from "lucide-react";
+
+const adminNavItems = [
+  { href: "/admin/dashboard", icon: <LayoutDashboard />, label: "Dashboard" },
+  { href: "/admin/employees", icon: <UsersIcon />, label: "Employees" },
+  { href: "/admin/rewards", icon: <AwardIcon />, label: "Issue Rewards" },
+  { href: "/admin/leaderboard", icon: <Trophy />, label: "Leaderboard" },
+  { href: "/admin/history", icon: <HistoryIcon />, label: "History" },
+];
+
+const adminSecondaryNavItems = [
+  { href: "#", icon: <Settings />, label: "Settings" },
+];
+
 
 const iconMap = {
     points: <Star className="h-5 w-5 text-accent" />,
@@ -40,6 +65,11 @@ export default function RewardHistoryPage() {
     const sortedRewards = [...allRewards].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return (
+      <AppLayout
+        user={currentUser as User}
+        navItems={adminNavItems}
+        secondaryNavItems={adminSecondaryNavItems}
+      >
         <div className="space-y-6">
             <div>
                 <h2 className="font-headline text-3xl font-bold tracking-tight">Reward History</h2>
@@ -55,5 +85,6 @@ export default function RewardHistoryPage() {
                 </CardContent>
             </Card>
         </div>
+      </AppLayout>
     )
 }

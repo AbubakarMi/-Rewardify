@@ -1,10 +1,23 @@
+'use client';
 import React from "react";
 import { StatCard } from "@/components/StatCard";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { currentEmployee, rewards as allRewards, leaderboard } from "@/lib/data";
-import { Star, Trophy } from "lucide-react";
+import { Star, Trophy, Gift, Settings, LayoutDashboard } from "lucide-react";
 import { RewardItem } from "@/components/RewardItem";
-import { Separator } from "@/components/ui/separator";
+import { AppLayout } from "@/components/AppLayout";
+import type { User } from "@/lib/types";
+
+const employeeNavItems = [
+  { href: "/employee/dashboard", icon: <LayoutDashboard />, label: "Dashboard" },
+  { href: "/employee/leaderboard", icon: <Trophy />, label: "Leaderboard" },
+  { href: "/employee/redeem", icon: <Gift />, label: "Redeem Rewards" },
+];
+
+const employeeSecondaryNavItems = [
+    { href: "#", icon: <Settings />, label: "Settings" },
+];
+
 
 export default function EmployeeDashboardPage() {
     const userRewards = allRewards
@@ -13,6 +26,11 @@ export default function EmployeeDashboardPage() {
     const userRank = leaderboard.find(e => e.userId === currentEmployee.id)?.rank;
 
     return (
+      <AppLayout
+        user={currentEmployee as User}
+        navItems={employeeNavItems}
+        secondaryNavItems={employeeSecondaryNavItems}
+      >
         <div className="space-y-6">
             <div>
                 <h2 className="font-headline text-3xl font-bold tracking-tight">Welcome, {currentEmployee.name.split(' ')[0]}!</h2>
@@ -50,5 +68,6 @@ export default function EmployeeDashboardPage() {
                 </CardContent>
             </Card>
         </div>
+      </AppLayout>
     )
 }
