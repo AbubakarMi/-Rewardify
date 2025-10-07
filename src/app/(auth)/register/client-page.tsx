@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -15,10 +16,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Award, AlertCircle } from "lucide-react";
-import { useAuth, useFirestore } from "@/firebase";
+import { initializeFirebase } from "@/firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+
+const { auth, firestore } = initializeFirebase();
 
 async function handleSuccessfulLogin(user: any) {
   const token = await user.getIdToken();
@@ -32,18 +35,11 @@ async function handleSuccessfulLogin(user: any) {
 
 export default function RegisterClientPage() {
   const router = useRouter();
-  const auth = useAuth();
-  const firestore = useFirestore();
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
-
-    if (!auth || !firestore) {
-      setError("Authentication service is not available.");
-      return;
-    }
 
     const name = (event.currentTarget.elements.namedItem("name") as HTMLInputElement).value;
     const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
@@ -66,9 +62,6 @@ export default function RegisterClientPage() {
       };
 
       await setDoc(doc(firestore, "users", user.uid), userProfile);
-      
-      // Note: Setting custom claims requires a backend, so we will handle that
-      // via the session creation logic.
       
       await handleSuccessfulLogin(user);
 

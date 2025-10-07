@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,9 @@ import {
   type Auth,
 } from "firebase/auth";
 import { getDoc, doc, type Firestore } from "firebase/firestore";
-import { useAuth, useFirestore } from "@/firebase";
+import { initializeFirebase } from "@/firebase";
+
+const { auth, firestore } = initializeFirebase();
 
 async function getRedirectPath(user: any, firestore: Firestore): Promise<string> {
   const userDocRef = doc(firestore, "users", user.uid);
@@ -54,17 +57,11 @@ async function handleSuccessfulLogin(user: any, firestore: Firestore) {
 
 export default function LoginClientPage() {
   const router = useRouter();
-  const auth = useAuth();
-  const firestore = useFirestore();
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
-    if (!auth || !firestore) {
-      setError("Authentication service is not available.");
-      return;
-    }
 
     const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
     const password = (event.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
@@ -85,10 +82,6 @@ export default function LoginClientPage() {
 
   const handleGoogleSignIn = async () => {
     setError(null);
-    if (!auth || !firestore) {
-      setError("Authentication service is not available.");
-      return;
-    }
     const provider = new GoogleAuthProvider();
     try {
       const userCredential = await signInWithPopup(auth, provider);
