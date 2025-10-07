@@ -16,56 +16,58 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Award, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useAuth } from "@/firebase";
-import {
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
+// import { useAuth } from "@/firebase";
+// import {
+//   signInWithEmailAndPassword,
+//   GoogleAuthProvider,
+//   signInWithPopup,
+// } from "firebase/auth";
 
 export default function LoginClientPage() {
   const router = useRouter();
-  const auth = useAuth();
-  const [error, setError] = useState<string | null>(null);
+  // const auth = useAuth();
+  const [error, setError] = useState<string | null>("Login is temporarily disabled.");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError(null);
-    if (!auth) {
-      setError("Authentication service is not available.");
-      return;
-    }
+    setError("Login functionality is currently disabled while we fix an issue.");
+    // setError(null);
+    // if (!auth) {
+    //   setError("Authentication service is not available.");
+    //   return;
+    // }
 
-    const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
-    const password = (event.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
+    // const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
+    // const password = (event.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
 
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // The user's role will be determined by middleware or claims in a real app.
-      // For now, we'll just check the email.
-      if (email.toLowerCase() === "testadmin@example.com") {
-        router.push("/admin/dashboard");
-      } else {
-        router.push("/employee/dashboard");
-      }
-    } catch (e: any) {
-      setError(e.message);
-    }
+    // try {
+    //   await signInWithEmailAndPassword(auth, email, password);
+    //   // The user's role will be determined by middleware or claims in a real app.
+    //   // For now, we'll just check the email.
+    //   if (email.toLowerCase() === "testadmin@example.com") {
+    //     router.push("/admin/dashboard");
+    //   } else {
+    //     router.push("/employee/dashboard");
+    //   }
+    // } catch (e: any) {
+    //   setError(e.message);
+    // }
   };
 
   const handleGoogleSignIn = async () => {
-    setError(null);
-    if (!auth) {
-      setError("Authentication service is not available.");
-      return;
-    }
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-      router.push("/employee/dashboard"); // Default redirect for Google sign-in
-    } catch (e: any) {
-      setError(e.message);
-    }
+    setError("Login functionality is currently disabled while we fix an issue.");
+    // setError(null);
+    // if (!auth) {
+    //   setError("Authentication service is not available.");
+    //   return;
+    // }
+    // const provider = new GoogleAuthProvider();
+    // try {
+    //   await signInWithPopup(auth, provider);
+    //   router.push("/employee/dashboard"); // Default redirect for Google sign-in
+    // } catch (e: any) {
+    //   setError(e.message);
+    // }
   };
 
 
