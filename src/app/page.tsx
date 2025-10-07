@@ -4,7 +4,7 @@ import { Award, Zap, Users, Gift, ArrowRight, Star } from 'lucide-react';
 import Image from 'next/image';
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
-  <div className="flex flex-col items-center p-6 text-center transition-transform duration-300 transform bg-white border rounded-lg shadow-sm hover:-translate-y-2">
+  <div className="flex flex-col items-center p-6 text-center transition-transform duration-300 transform bg-card border rounded-xl shadow-sm hover:-translate-y-2">
     <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
       {icon}
     </div>
@@ -142,8 +142,9 @@ export default function LandingPage() {
       </main>
 
       <footer className="border-t bg-white py-8">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+        <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 text-center text-sm text-muted-foreground sm:flex-row">
           <p>&copy; {new Date().getFullYear()} Rewardify. All rights reserved.</p>
+          <p>Powered by <a href="https://nubenta.com" target="_blank" rel="noopener noreferrer" className="font-semibold hover:text-primary">Nubenta Technology Limited</a></p>
         </div>
       </footer>
     </div>
