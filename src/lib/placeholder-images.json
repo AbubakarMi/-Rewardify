@@ -37,6 +37,12 @@
       "imageHint": "person portrait"
     },
     {
+      "id": "hero",
+      "description": "Hero section image",
+      "imageUrl": "https://picsum.photos/seed/hero-image/800/800",
+      "imageHint": "team achievement"
+    },
+    {
       "id": "amazon",
       "description": "Amazon Gift Card",
       "imageUrl": "https://picsum.photos/seed/amazon/400/250",

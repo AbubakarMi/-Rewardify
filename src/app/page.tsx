@@ -39,32 +39,37 @@ export default function LandingPage() {
       </header>
 
       <main className="flex-1">
-        <section className="py-20 md:py-32">
-          <div className="container mx-auto px-4 text-center">
-            <div className="mb-4 flex justify-center">
-                <div className="flex items-center gap-1 px-4 py-1 text-sm text-blue-600 bg-blue-100 rounded-full">
-                    <Star className="w-4 h-4 text-blue-500 fill-current" />
-                    <span>Trusted by over 1,000+ companies</span>
-                </div>
+        <section className="bg-white">
+          <div className="container mx-auto grid items-center gap-12 px-4 py-20 md:grid-cols-2 md:py-32">
+            <div className="space-y-6 text-center md:text-left">
+              <div className="mb-4 flex justify-center md:justify-start">
+                  <div className="flex items-center gap-2 px-4 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded-full">
+                      <Star className="w-4 h-4 text-blue-500 fill-current" />
+                      <span>Trusted by over 1,000+ companies</span>
+                  </div>
+              </div>
+              <h2 className="font-headline text-4xl font-extrabold tracking-tight md:text-5xl lg:text-6xl">
+                Recognize Excellence. Inspire Growth.
+              </h2>
+              <p className="mx-auto max-w-2xl text-lg text-muted-foreground md:mx-0">
+                Rewardify is the ultimate platform to motivate your team, celebrate achievements, and foster a culture of recognition that drives results.
+              </p>
+              <div className="flex flex-col gap-4 sm:flex-row justify-center md:justify-start">
+                <Button size="lg" asChild>
+                  <Link href="/register">Get Started for Free</Link>
+                </Button>
+                <Button size="lg" variant="outline">
+                  Request a Demo
+                </Button>
+              </div>
             </div>
-            <h2 className="font-headline text-4xl font-extrabold tracking-tight md:text-6xl">
-              Recognize Excellence. Inspire Growth.
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-              Rewardify is the ultimate platform to motivate your team, celebrate achievements, and foster a culture of recognition that drives results.
-            </p>
-            <div className="mt-8 flex justify-center gap-4">
-              <Button size="lg" asChild>
-                <Link href="/register">Get Started for Free</Link>
-              </Button>
-              <Button size="lg" variant="outline">
-                Request a Demo
-              </Button>
+            <div className="relative h-80 w-full rounded-lg bg-gray-200 md:h-96">
+                <Image src="https://picsum.photos/seed/hero-image/800/800" alt="Team celebrating success" layout="fill" className="object-cover rounded-2xl shadow-lg" data-ai-hint="team achievement" />
             </div>
           </div>
         </section>
 
-        <section id="features" className="bg-white py-20">
+        <section id="features" className="py-20">
           <div className="container mx-auto px-4">
             <div className="mb-12 text-center">
               <h2 className="font-headline text-3xl font-bold">Why Choose Rewardify?</h2>
@@ -90,7 +95,7 @@ export default function LandingPage() {
           </div>
         </section>
         
-        <section id="how-it-works" className="py-20">
+        <section id="how-it-works" className="bg-white py-20">
             <div className="container mx-auto px-4">
                 <div className="mb-12 text-center">
                     <h2 className="font-headline text-3xl font-bold">How It Works</h2>
