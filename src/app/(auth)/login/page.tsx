@@ -14,16 +14,18 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Award } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [role, setRole] = useState("employee");
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (role === "admin") {
+    // This is a simplified login. In a real app, you'd check credentials
+    // and role, then redirect. For now, we'll simulate a user choice.
+    // Let's assume a "testadmin@example.com" is an admin for demo purposes.
+    const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
+    if (email === 'testadmin@example.com') {
       router.push("/admin/dashboard");
     } else {
       router.push("/employee/dashboard");
@@ -44,29 +46,11 @@ export default function LoginPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="m@example.com" required />
+              <Input id="email" type="email" placeholder="m@example.com" defaultValue="testadmin@example.com" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required />
-            </div>
-            <div className="space-y-2">
-              <Label>Role</Label>
-              <RadioGroup
-                defaultValue="employee"
-                className="flex space-x-4 pt-2"
-                value={role}
-                onValueChange={setRole}
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="employee" id="employee" />
-                  <Label htmlFor="employee">Employee</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="admin" id="admin" />
-                  <Label htmlFor="admin">Admin</Label>
-                </div>
-              </RadioGroup>
+              <Input id="password" type="password" defaultValue="password" required />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
