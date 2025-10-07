@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -38,7 +37,7 @@ export default function LoginPage() {
     
     // This is a simplified login. In a real app, you'd check credentials
     // and role, then redirect. For now, we'll simulate a user choice.
-    if (email === 'testadmin@example.com') {
+    if (email.toLowerCase() === 'testadmin@example.com') {
       setCookie('user_role', 'admin', 1);
       router.push("/admin/dashboard");
     } else {
