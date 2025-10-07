@@ -8,7 +8,7 @@ export const users: User[] = [
   { id: '2', name: 'Bob Williams', email: 'bob@example.com', role: 'employee', avatarUrl: findImage('user2')?.imageUrl ?? '', points: 1100 },
   { id: '3', name: 'Charlie Brown', email: 'charlie@example.com', role: 'employee', avatarUrl: findImage('user3')?.imageUrl ?? '', points: 950 },
   { id: '4', name: 'Diana Miller', email: 'diana@example.com', role: 'employee', avatarUrl: findImage('user4')?.imageUrl ?? '', points: 1300 },
-  { id: '5', name: 'Eve Davis', email: 'eve@example.com', role: 'admin', avatarUrl: findImage('admin1')?.imageUrl ?? '', points: 0 },
+  { id: '5', name: 'Eve Davis', email: 'testadmin@example.com', role: 'admin', avatarUrl: findImage('admin1')?.imageUrl ?? '', points: 0 },
   { id: '6', name: 'Frank White', email: 'frank@example.com', role: 'employee', avatarUrl: findImage('user5')?.imageUrl ?? '', points: 800 },
 ];
 
