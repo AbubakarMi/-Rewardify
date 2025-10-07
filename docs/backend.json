@@ -1,0 +1,112 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Represents a user's profile in the system.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The user's full name."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "The user's email address."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "employee"],
+          "description": "The user's role."
+        },
+        "avatarUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL for the user's avatar image."
+        },
+        "points": {
+          "type": "number",
+          "description": "Total points accumulated by the user."
+        }
+      },
+      "required": ["name", "email", "role", "points"]
+    },
+    "Reward": {
+      "title": "Reward",
+      "description": "Represents a reward given to a user.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who received the reward."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["points", "badge", "gift-card"],
+          "description": "The type of reward."
+        },
+        "value": {
+          "type": ["number", "string"],
+          "description": "The value of the reward (e.g., number of points or name of the badge)."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of why the reward was given."
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date the reward was issued."
+        }
+      },
+      "required": ["userId", "type", "value", "description", "date"]
+    },
+    "GiftCard": {
+      "title": "Gift Card",
+      "description": "Represents a gift card that can be redeemed with points.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        },
+        "pointsCost": {
+          "type": "number"
+        },
+        "imageUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "imageHint": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "value", "pointsCost", "imageUrl"]
+    }
+  },
+  "auth": {
+    "providers": ["google.com", "password"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Stores user profile information."
+    },
+    "/rewards/{rewardId}": {
+      "schema": {
+        "$ref": "#/entities/Reward"
+      },
+      "description": "Stores individual reward records."
+    },
+    "/gift-cards/{giftCardId}": {
+      "schema": {
+        "$ref": "#/entities/GiftCard"
+      },
+      "description": "Stores available gift cards for redemption."
+    }
+  }
+}

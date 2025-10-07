@@ -16,18 +16,25 @@ import { Button } from "@/components/ui/button";
 import { Bell, User as UserIcon } from "lucide-react";
 import type { User } from "@/lib/types";
 import { AppSidebar } from "./AppSidebar";
+import { useUser } from "@/firebase";
 
 type AppLayoutProps = {
-  user: User;
+  user: User; // This will be replaced by the authenticated user from `useUser`
   navItems: { href: string; icon: ReactNode; label: string }[];
   secondaryNavItems: { href: string; icon: ReactNode; label: string }[];
   children: ReactNode;
 };
 
-export function AppLayout({ user, navItems, secondaryNavItems, children }: AppLayoutProps) {
+export function AppLayout({ navItems, secondaryNavItems, children }: AppLayoutProps) {
+  const { user, loading } = useUser();
+
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('');
   }
+
+  const displayName = user?.displayName || user?.email || "User";
+  const avatarUrl = user?.photoURL;
+
 
   return (
     <SidebarProvider>
@@ -41,13 +48,13 @@ export function AppLayout({ user, navItems, secondaryNavItems, children }: AppLa
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={user.avatarUrl} alt={user.name} />
-                      <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                      <AvatarImage src={avatarUrl ?? undefined} alt={displayName} />
+                      <AvatarFallback>{getInitials(displayName)}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end">
-                  <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
+                  <DropdownMenuLabel>{displayName}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <UserIcon className="mr-2 h-4 w-4" />

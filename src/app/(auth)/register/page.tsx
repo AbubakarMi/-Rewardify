@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -13,15 +14,36 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Award } from "lucide-react";
+import { Award, AlertCircle } from "lucide-react";
+import { useAuth } from "@/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
 
 export default function RegisterPage() {
   const router = useRouter();
+  const auth = useAuth();
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // All new registrations are for employees
-    router.push("/employee/dashboard");
+    setError(null);
+
+    if (!auth) {
+      setError("Authentication service is not available.");
+      return;
+    }
+
+    const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (event.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      // For now, all new users are employees
+      router.push("/employee/dashboard");
+    } catch (e: any) {
+      setError(e.message);
+    }
   };
 
   return (
@@ -36,6 +58,12 @@ export default function RegisterPage() {
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+             {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
              <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
               <Input id="name" type="text" placeholder="John Doe" required />

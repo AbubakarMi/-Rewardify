@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Sidebar,
@@ -14,6 +14,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Award, LogOut } from "lucide-react";
 import type { ReactNode } from "react";
+import { useAuth } from "@/firebase";
+import { signOut } from "firebase/auth";
 
 type AppSidebarProps = {
     navItems: { href: string; icon: ReactNode; label: string }[];
@@ -22,6 +24,15 @@ type AppSidebarProps = {
 
 export function AppSidebar({ navItems, secondaryNavItems }: AppSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const auth = useAuth();
+
+  const handleSignOut = async () => {
+    if (auth) {
+      await signOut(auth);
+      router.push('/login');
+    }
+  }
 
   return (
     <Sidebar className="hidden border-r bg-background sm:flex">
@@ -62,12 +73,10 @@ export function AppSidebar({ navItems, secondaryNavItems }: AppSidebarProps) {
           ))}
            <Separator className="my-1" />
            <SidebarMenuItem>
-              <Link href="/login" legacyBehavior passHref>
-                <SidebarMenuButton tooltip="Log out">
-                  <LogOut />
-                  <span className="group-data-[collapsible=icon]:hidden">Log Out</span>
-                </SidebarMenuButton>
-              </Link>
+              <SidebarMenuButton tooltip="Log out" onClick={handleSignOut}>
+                <LogOut />
+                <span className="group-data-[collapsible=icon]:hidden">Log Out</span>
+              </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

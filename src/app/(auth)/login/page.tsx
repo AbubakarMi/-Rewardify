@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -13,38 +14,60 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Award } from "lucide-react";
-
-// A mock function to set a cookie. In a real app, this would be handled
-// by your authentication library.
-const setCookie = (name: string, value: string, days: number) => {
-  let expires = "";
-  if (days) {
-    const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    expires = "; expires=" + date.toUTCString();
-  }
-  document.cookie = name + "=" + (value || "") + expires + "; path=/";
-};
-
+import { Award, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/firebase";
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 
 export default function LoginPage() {
   const router = useRouter();
+  const auth = useAuth();
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError(null);
+    if (!auth) {
+      setError("Authentication service is not available.");
+      return;
+    }
+
     const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
-    
-    // This is a simplified login. In a real app, you'd check credentials
-    // and role, then redirect. For now, we'll simulate a user choice.
-    if (email.toLowerCase() === 'testadmin@example.com') {
-      setCookie('user_role', 'admin', 1);
-      router.push("/admin/dashboard");
-    } else {
-      setCookie('user_role', 'employee', 1);
-      router.push("/employee/dashboard");
+    const password = (event.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      // The user's role will be determined by middleware or claims in a real app.
+      // For now, we'll just check the email.
+      if (email.toLowerCase() === "testadmin@example.com") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/employee/dashboard");
+      }
+    } catch (e: any) {
+      setError(e.message);
     }
   };
+
+  const handleGoogleSignIn = async () => {
+    setError(null);
+    if (!auth) {
+      setError("Authentication service is not available.");
+      return;
+    }
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      router.push("/employee/dashboard"); // Default redirect for Google sign-in
+    } catch (e: any) {
+      setError(e.message);
+    }
+  };
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-secondary">
@@ -58,6 +81,12 @@ export default function LoginPage() {
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+             {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" type="email" placeholder="m@example.com" defaultValue="testadmin@example.com" required />
@@ -70,6 +99,19 @@ export default function LoginPage() {
           <CardFooter className="flex flex-col space-y-4">
             <Button className="w-full font-bold" type="submit">
               Sign In
+            </Button>
+            <div className="relative w-full">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+             <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} type="button">
+              Google
             </Button>
             <p className="text-sm text-muted-foreground">
               Don't have an account?{" "}
