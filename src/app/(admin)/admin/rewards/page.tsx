@@ -4,7 +4,7 @@ import { RewardSuggestions } from "@/components/admin/RewardSuggestions";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
 import { AppLayout } from "@/components/AppLayout";
-import { currentUser } from "@/lib/data";
+import { useUser } from "@/firebase";
 import type { User } from "@/lib/types";
 import {
   LayoutDashboard,
@@ -42,9 +42,9 @@ function SuggestionsSkeleton() {
 }
 
 export default function IssueRewardPage() {
+    const { user } = useUser();
     return (
       <AppLayout
-        user={currentUser as User}
         navItems={adminNavItems}
         secondaryNavItems={adminSecondaryNavItems}
       >

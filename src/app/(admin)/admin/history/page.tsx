@@ -8,7 +8,7 @@ import type { Reward } from "@/lib/types";
 import { format } from "date-fns";
 import { Award, Gift, Star } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
-import { currentUser } from "@/lib/data";
+import { useUser } from "@/firebase";
 import type { User } from "@/lib/types";
 import {
   LayoutDashboard,
@@ -63,10 +63,10 @@ function AdminRewardItem({ reward }: { reward: Reward }) {
 
 export default function RewardHistoryPage() {
     const sortedRewards = [...allRewards].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const { user } = useUser();
 
     return (
       <AppLayout
-        user={currentUser as User}
         navItems={adminNavItems}
         secondaryNavItems={adminSecondaryNavItems}
       >

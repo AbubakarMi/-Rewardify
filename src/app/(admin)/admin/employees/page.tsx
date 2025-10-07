@@ -12,7 +12,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EmployeeActions } from "@/components/admin/EmployeeActions";
 import { AddEmployeeDialog } from "@/components/admin/AddEmployeeDialog";
 import { AppLayout } from "@/components/AppLayout";
-import { currentUser } from "@/lib/data";
 import type { User } from "@/lib/types";
 import {
   LayoutDashboard,
@@ -22,7 +21,7 @@ import {
   History,
   Settings,
 } from "lucide-react";
-import { useCollection } from "@/firebase";
+import { useCollection, useUser } from "@/firebase";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const adminNavItems = [
@@ -65,7 +64,6 @@ export default function EmployeesPage() {
     
     return (
     <AppLayout
-      user={currentUser as User}
       navItems={adminNavItems}
       secondaryNavItems={adminSecondaryNavItems}
     >

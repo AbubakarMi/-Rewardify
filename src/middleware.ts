@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { auth } from 'firebase-admin';
+import { initializeAdminApp } from '@/firebase/admin-init';
+import { getAuth } from 'firebase-admin/auth';
+
+// Initialize the app once
+initializeAdminApp();
+const auth = getAuth();
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -12,7 +17,7 @@ export async function middleware(request: NextRequest) {
       if (sessionCookie) {
           try {
               // If user is logged in, redirect them from login/register
-              const decodedClaims = await auth().verifySessionCookie(sessionCookie, true);
+              const decodedClaims = await auth.verifySessionCookie(sessionCookie, true);
               const role = decodedClaims.role || 'employee';
               if (role === 'admin') {
                   return NextResponse.redirect(new URL('/admin/dashboard', request.url));
@@ -28,11 +33,15 @@ export async function middleware(request: NextRequest) {
 
   // If no session cookie, redirect to login for protected routes
   if (!sessionCookie) {
+      // Allow root path to redirect to login
+      if (pathname === '/') {
+        return NextResponse.next();
+      }
       return NextResponse.redirect(new URL('/login', request.url));
   }
 
   try {
-      const decodedClaims = await auth().verifySessionCookie(sessionCookie, true);
+      const decodedClaims = await auth.verifySessionCookie(sessionCookie, true);
       const userRole = decodedClaims.role || 'employee'; // default to employee if no role
       
       // Admin route protection

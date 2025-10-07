@@ -12,7 +12,7 @@ type CreateEmployeeInput = {
   password?: string;
 };
 
-export async function createEmployee(data: CreateEmployeeInput) {
+export async function createEmployeeAction(data: CreateEmployeeInput) {
   try {
     const auth = getAuth();
     const firestore = getFirestore();
@@ -22,8 +22,6 @@ export async function createEmployee(data: CreateEmployeeInput) {
       email: data.email,
       password: data.password,
       displayName: data.name,
-      // You can set a default avatar URL here if you want
-      // photoURL: '...'
     });
 
     // Create user profile in Firestore

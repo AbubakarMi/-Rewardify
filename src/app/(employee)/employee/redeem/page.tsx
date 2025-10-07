@@ -1,8 +1,9 @@
 'use client';
 import { GiftCardItem } from "@/components/GiftCardItem";
-import { giftCards, currentEmployee } from "@/lib/data";
+import { giftCards } from "@/lib/data";
 import { AppLayout } from "@/components/AppLayout";
 import type { User } from "@/lib/types";
+import { useUser, useDoc } from "@/firebase";
 import {
   LayoutDashboard,
   Trophy,
@@ -21,9 +22,22 @@ const employeeSecondaryNavItems = [
 ];
 
 export default function RedeemPage() {
+  const { user } = useUser();
+  const { data: employee, loading } = useDoc<User>(user ? `users/${user.uid}` : '');
+
+  if (loading || !employee) {
+    return (
+        <AppLayout
+            navItems={employeeNavItems}
+            secondaryNavItems={employeeSecondaryNavItems}
+        >
+            <div>Loading...</div>
+        </AppLayout>
+    )
+  }
+
   return (
     <AppLayout
-      user={currentEmployee as User}
       navItems={employeeNavItems}
       secondaryNavItems={employeeSecondaryNavItems}
     >
@@ -34,7 +48,7 @@ export default function RedeemPage() {
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {giftCards.map((gc) => (
-            <GiftCardItem key={gc.id} giftCard={gc} userPoints={currentEmployee.points} />
+            <GiftCardItem key={gc.id} giftCard={gc} userPoints={employee.points} />
           ))}
         </div>
       </div>

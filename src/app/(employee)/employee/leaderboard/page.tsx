@@ -2,8 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
 import { AppLayout } from "@/components/AppLayout";
-import { currentEmployee } from "@/lib/data";
-import type { User } from "@/lib/types";
+import { useUser } from "@/firebase";
 import {
   LayoutDashboard,
   Trophy,
@@ -22,9 +21,9 @@ const employeeSecondaryNavItems = [
 ];
 
 export default function LeaderboardPage() {
+  const { user } = useUser();
   return (
     <AppLayout
-      user={currentEmployee as User}
       navItems={employeeNavItems}
       secondaryNavItems={employeeSecondaryNavItems}
     >

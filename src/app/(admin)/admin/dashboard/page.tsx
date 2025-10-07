@@ -7,8 +7,6 @@ import { summarizeRewardData } from "@/ai/flows/summarize-reward-data";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppLayout } from "@/components/AppLayout";
-import { currentUser } from "@/lib/data";
-import type { User } from "@/lib/types";
 import {
   LayoutDashboard,
   Users as UsersIcon,
@@ -17,6 +15,7 @@ import {
   History,
   Settings,
 } from "lucide-react";
+import { useUser } from "@/firebase";
 
 const adminNavItems = [
   { href: "/admin/dashboard", icon: <LayoutDashboard />, label: "Dashboard" },
@@ -68,10 +67,10 @@ export default function AdminDashboardPage() {
   const totalEmployees = users.filter(u => u.role === 'employee').length;
   const rewardsIssued = rewards.length;
   const totalPoints = rewards.filter(r => r.type === 'points').reduce((sum, r) => sum + (r.value as number), 0);
+  const { user } = useUser();
 
   return (
     <AppLayout
-      user={currentUser as User}
       navItems={adminNavItems}
       secondaryNavItems={adminSecondaryNavItems}
     >

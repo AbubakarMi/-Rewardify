@@ -13,13 +13,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Bell, User as UserIcon } from "lucide-react";
-import type { User } from "@/lib/types";
+import { Bell, User as UserIcon, LogOut } from "lucide-react";
 import { AppSidebar } from "./AppSidebar";
 import { useUser } from "@/firebase";
+import { useRouter } from "next/navigation";
+import { signOut, getAuth } from "firebase/auth";
 
 type AppLayoutProps = {
-  user: User; // This will be replaced by the authenticated user from `useUser`
   navItems: { href: string; icon: ReactNode; label: string }[];
   secondaryNavItems: { href: string; icon: ReactNode; label: string }[];
   children: ReactNode;
@@ -27,6 +27,12 @@ type AppLayoutProps = {
 
 export function AppLayout({ navItems, secondaryNavItems, children }: AppLayoutProps) {
   const { user, loading } = useUser();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut(getAuth());
+    router.push('/login');
+  }
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('');
@@ -34,7 +40,6 @@ export function AppLayout({ navItems, secondaryNavItems, children }: AppLayoutPr
 
   const displayName = user?.displayName || user?.email || "User";
   const avatarUrl = user?.photoURL;
-
 
   return (
     <SidebarProvider>
@@ -63,6 +68,11 @@ export function AppLayout({ navItems, secondaryNavItems, children }: AppLayoutPr
                    <DropdownMenuItem>
                     <Bell className="mr-2 h-4 w-4" />
                     <span>Notifications</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log Out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

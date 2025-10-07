@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import { createEmployee } from "@/app/actions/user-management";
+import { createEmployeeAction } from "@/app/actions/user-actions";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -48,7 +48,7 @@ export function AddEmployeeDialog() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const result = await createEmployee(values);
+      const result = await createEmployeeAction(values);
       if (result.error) {
         throw new Error(result.error);
       }

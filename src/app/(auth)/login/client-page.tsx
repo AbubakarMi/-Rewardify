@@ -16,58 +16,82 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Award, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-// import { useAuth } from "@/firebase";
-// import {
-//   signInWithEmailAndPassword,
-//   GoogleAuthProvider,
-//   signInWithPopup,
-// } from "firebase/auth";
+import { useAuth } from "@/firebase";
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { getDoc, doc } from "firebase/firestore";
+import { useFirestore } from "@/firebase";
+
+async function getRedirectPath(user: any, firestore: any): Promise<string> {
+  const userDoc = await getDoc(doc(firestore, "users", user.uid));
+  if (userDoc.exists()) {
+    const userData = userDoc.data();
+    if (userData.role === 'admin') {
+      return "/admin/dashboard";
+    }
+  }
+  return "/employee/dashboard";
+}
+
+async function handleSuccessfulLogin(user: any, firestore: any) {
+    const token = await user.getIdToken();
+    const idTokenResult = await user.getIdTokenResult();
+    const redirectPath = await getRedirectPath(user, firestore);
+
+    await fetch("/api/auth/session", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+    });
+
+    // Redirect after session is set
+    window.location.assign(redirectPath);
+}
+
 
 export default function LoginClientPage() {
   const router = useRouter();
-  // const auth = useAuth();
-  const [error, setError] = useState<string | null>("Login is temporarily disabled.");
+  const auth = useAuth();
+  const firestore = useFirestore();
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError("Login functionality is currently disabled while we fix an issue.");
-    // setError(null);
-    // if (!auth) {
-    //   setError("Authentication service is not available.");
-    //   return;
-    // }
+    setError(null);
+    if (!auth || !firestore) {
+      setError("Authentication service is not available.");
+      return;
+    }
 
-    // const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
-    // const password = (event.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
+    const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (event.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
 
-    // try {
-    //   await signInWithEmailAndPassword(auth, email, password);
-    //   // The user's role will be determined by middleware or claims in a real app.
-    //   // For now, we'll just check the email.
-    //   if (email.toLowerCase() === "testadmin@example.com") {
-    //     router.push("/admin/dashboard");
-    //   } else {
-    //     router.push("/employee/dashboard");
-    //   }
-    // } catch (e: any) {
-    //   setError(e.message);
-    // }
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      await handleSuccessfulLogin(userCredential.user, firestore);
+    } catch (e: any) {
+      setError(e.message);
+    }
   };
 
   const handleGoogleSignIn = async () => {
-    setError("Login functionality is currently disabled while we fix an issue.");
-    // setError(null);
-    // if (!auth) {
-    //   setError("Authentication service is not available.");
-    //   return;
-    // }
-    // const provider = new GoogleAuthProvider();
-    // try {
-    //   await signInWithPopup(auth, provider);
-    //   router.push("/employee/dashboard"); // Default redirect for Google sign-in
-    // } catch (e: any) {
-    //   setError(e.message);
-    // }
+    setError(null);
+    if (!auth || !firestore) {
+      setError("Authentication service is not available.");
+      return;
+    }
+    const provider = new GoogleAuthProvider();
+    try {
+      const userCredential = await signInWithPopup(auth, provider);
+      await handleSuccessfulLogin(userCredential.user, firestore);
+    } catch (e: any) {
+      setError(e.message);
+    }
   };
 
 
