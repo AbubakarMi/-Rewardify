@@ -10,6 +10,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - login (login page)
+     * - register (register page)
      */
     '/((?!api|_next/static|_next/image|favicon.ico|login|register).*)',
   ],
@@ -17,7 +19,14 @@ export const config = {
 
 export function middleware(request: NextRequest) {
   const sessionCookie = request.cookies.get('__session')?.value;
+  const { pathname } = request.nextUrl;
 
+  // Allow access to the landing page for everyone
+  if (pathname === '/') {
+    return NextResponse.next();
+  }
+
+  // For all other matched routes, redirect to login if not authenticated
   if (!sessionCookie) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
