@@ -8,6 +8,7 @@ import {
   Gift,
   Settings,
 } from "lucide-react";
+import { FirebaseClientProvider } from "@/firebase/client-provider";
 
 const employeeNavItems = [
   { href: "/employee/dashboard", icon: <LayoutDashboard />, label: "Dashboard" },
@@ -21,12 +22,14 @@ const employeeSecondaryNavItems = [
 
 export default function EmployeeLayout({ children }: { children: ReactNode }) {
   return (
-    <AppLayout
-      user={currentEmployee as User}
-      navItems={employeeNavItems}
-      secondaryNavItems={employeeSecondaryNavItems}
-    >
-      {children}
-    </AppLayout>
+    <FirebaseClientProvider>
+      <AppLayout
+        user={currentEmployee as User}
+        navItems={employeeNavItems}
+        secondaryNavItems={employeeSecondaryNavItems}
+      >
+        {children}
+      </AppLayout>
+    </FirebaseClientProvider>
   );
 }

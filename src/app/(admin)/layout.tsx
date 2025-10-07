@@ -10,6 +10,7 @@ import {
   History,
   Settings,
 } from "lucide-react";
+import { FirebaseClientProvider } from "@/firebase/client-provider";
 
 const adminNavItems = [
   { href: "/admin/dashboard", icon: <LayoutDashboard />, label: "Dashboard" },
@@ -25,12 +26,14 @@ const adminSecondaryNavItems = [
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <AppLayout
-      user={currentUser as User}
-      navItems={adminNavItems}
-      secondaryNavItems={adminSecondaryNavItems}
-    >
-      {children}
-    </AppLayout>
+    <FirebaseClientProvider>
+      <AppLayout
+        user={currentUser as User}
+        navItems={adminNavItems}
+        secondaryNavItems={adminSecondaryNavItems}
+      >
+        {children}
+      </AppLayout>
+    </FirebaseClientProvider>
   );
 }
