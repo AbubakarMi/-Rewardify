@@ -77,8 +77,8 @@ export default function RegisterClientPage() {
   };
 
   return (
-    <div className="dark flex min-h-screen items-center justify-center bg-background">
-      <Card className="w-full max-w-md border-border/50 shadow-2xl">
+    <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
+      <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
           <div className="mb-4 flex justify-center">
             <Award className="h-12 w-12 text-primary" />
