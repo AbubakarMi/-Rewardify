@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Award, Zap, Users, Gift, ArrowRight, Star } from 'lucide-react';
+import { Award, Zap, Users, Gift, ArrowRight, Star, TrendingUp } from 'lucide-react';
 import RotatingText from '@/components/ui/RotatingText';
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
@@ -12,6 +12,16 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, titl
     <p className="text-muted-foreground">{description}</p>
   </div>
 );
+
+const HowItWorksCard = ({ icon, step, title, description }: { icon: React.ReactNode, step: string, title: string, description: string }) => (
+  <div className="relative flex flex-col items-center p-8 text-center bg-card border rounded-2xl shadow-sm">
+    <div className="absolute -top-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary font-bold text-lg text-primary-foreground">{step}</div>
+    <div className="mb-4 text-primary">{icon}</div>
+    <h3 className="mb-2 font-headline text-xl font-semibold">{title}</h3>
+    <p className="text-muted-foreground">{description}</p>
+  </div>
+);
+
 
 export default function LandingPage() {
   return (
@@ -109,34 +119,29 @@ export default function LandingPage() {
 
         <section id="how-it-works" className="bg-white py-20">
           <div className="container mx-auto px-4">
-            <div className="mb-12 text-center">
-              <h2 className="font-headline text-3xl font-bold">How It Works</h2>
-              <p className="text-muted-foreground">A simple, intuitive process for recognition.</p>
+            <div className="mb-16 text-center">
+              <h2 className="font-headline text-3xl font-bold">A Simple Path to Motivation</h2>
+              <p className="mx-auto mt-2 max-w-2xl text-muted-foreground">See how easy it is to build a culture of recognition in just three steps.</p>
             </div>
-            <div className="mx-auto max-w-3xl">
-              <div className="space-y-8">
-                <div className="flex gap-4">
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary font-bold text-lg text-white">1</div>
-                  <div>
-                    <h3 className="text-xl font-semibold">Admins Issue Rewards</h3>
-                    <p className="text-muted-foreground">Managers and admins can easily award points or badges for achievements, big and small.</p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary font-bold text-lg text-white">2</div>
-                  <div>
-                    <h3 className="text-xl font-semibold">Employees Track Progress</h3>
-                    <p className="text-muted-foreground">Employees can see their points accumulate on their dashboard and climb the leaderboard.</p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary font-bold text-lg text-white">3</div>
-                  <div>
-                    <h3 className="text-xl font-semibold">Redeem for Gift Cards</h3>
-                    <p className="text-muted-foreground">Points can be redeemed for a variety of popular gift cards from our curated catalog.</p>
-                  </div>
-                </div>
-              </div>
+            <div className="grid grid-cols-1 gap-12 md:grid-cols-3 md:gap-8">
+               <HowItWorksCard 
+                step="1"
+                icon={<Award className="h-10 w-10" />}
+                title="Recognize & Reward"
+                description="Admins and managers instantly award points or badges for milestones, achievements, and demonstrating company values."
+               />
+               <HowItWorksCard 
+                step="2"
+                icon={<TrendingUp className="h-10 w-10" />}
+                title="Track & Compete"
+                description="Employees watch their points grow, see their recent accolades, and climb the company-wide leaderboard."
+               />
+               <HowItWorksCard 
+                step="3"
+                icon={<Gift className="h-10 w-10" />}
+                title="Redeem Real Value"
+                description="Team members redeem their hard-earned points for a variety of popular gift cards from our curated catalog."
+               />
             </div>
           </div>
         </section>
