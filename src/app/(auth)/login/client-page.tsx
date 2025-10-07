@@ -16,82 +16,83 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Award, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useAuth } from "@/firebase";
-import {
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
-import { getDoc, doc } from "firebase/firestore";
-import { useFirestore } from "@/firebase";
+// import { useAuth, useFirestore } from "@/firebase";
+// import {
+//   signInWithEmailAndPassword,
+//   GoogleAuthProvider,
+//   signInWithPopup,
+// } from "firebase/auth";
+// import { getDoc, doc } from "firebase/firestore";
 
-async function getRedirectPath(user: any, firestore: any): Promise<string> {
-  const userDoc = await getDoc(doc(firestore, "users", user.uid));
-  if (userDoc.exists()) {
-    const userData = userDoc.data();
-    if (userData.role === 'admin') {
-      return "/admin/dashboard";
-    }
-  }
-  return "/employee/dashboard";
-}
+// async function getRedirectPath(user: any, firestore: any): Promise<string> {
+//   const userDoc = await getDoc(doc(firestore, "users", user.uid));
+//   if (userDoc.exists()) {
+//     const userData = userDoc.data();
+//     if (userData.role === 'admin') {
+//       return "/admin/dashboard";
+//     }
+//   }
+//   return "/employee/dashboard";
+// }
 
-async function handleSuccessfulLogin(user: any, firestore: any) {
-    const token = await user.getIdToken();
-    const idTokenResult = await user.getIdTokenResult();
-    const redirectPath = await getRedirectPath(user, firestore);
+// async function handleSuccessfulLogin(user: any, firestore: any) {
+//     const token = await user.getIdToken();
+//     const idTokenResult = await user.getIdTokenResult();
+//     const redirectPath = await getRedirectPath(user, firestore);
 
-    await fetch("/api/auth/session", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token }),
-    });
+//     await fetch("/api/auth/session", {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ token }),
+//     });
 
-    // Redirect after session is set
-    window.location.assign(redirectPath);
-}
+//     // Redirect after session is set
+//     window.location.assign(redirectPath);
+// }
 
 
 export default function LoginClientPage() {
   const router = useRouter();
-  const auth = useAuth();
-  const firestore = useFirestore();
+  // const auth = useAuth();
+  // const firestore = useFirestore();
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError(null);
-    if (!auth || !firestore) {
-      setError("Authentication service is not available.");
-      return;
-    }
+    setError("Login is temporarily disabled.");
+    // setError(null);
+    // if (!auth || !firestore) {
+    //   setError("Authentication service is not available.");
+    //   return;
+    // }
 
-    const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
-    const password = (event.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
+    // const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
+    // const password = (event.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
 
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      await handleSuccessfulLogin(userCredential.user, firestore);
-    } catch (e: any) {
-      setError(e.message);
-    }
+    // try {
+    //   const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    //   await handleSuccessfulLogin(userCredential.user, firestore);
+    // } catch (e: any) {
+    //   setError(e.message);
+    // }
   };
 
   const handleGoogleSignIn = async () => {
-    setError(null);
-    if (!auth || !firestore) {
-      setError("Authentication service is not available.");
-      return;
-    }
-    const provider = new GoogleAuthProvider();
-    try {
-      const userCredential = await signInWithPopup(auth, provider);
-      await handleSuccessfulLogin(userCredential.user, firestore);
-    } catch (e: any) {
-      setError(e.message);
-    }
+    setError("Login is temporarily disabled.");
+    // setError(null);
+    // if (!auth || !firestore) {
+    //   setError("Authentication service is not available.");
+    //   return;
+    // }
+    // const provider = new GoogleAuthProvider();
+    // try {
+    //   const userCredential = await signInWithPopup(auth, provider);
+    //   await handleSuccessfulLogin(userCredential.user, firestore);
+    // } catch (e: any) {
+    //   setError(e.message);
+    // }
   };
 
 

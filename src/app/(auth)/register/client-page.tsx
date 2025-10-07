@@ -15,66 +15,67 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Award, AlertCircle } from "lucide-react";
-import { useAuth, useFirestore } from "@/firebase";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+// import { useAuth, useFirestore } from "@/firebase";
+// import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+// import { doc, setDoc } from "firebase/firestore";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-async function handleSuccessfulLogin(user: any) {
-  const token = await user.getIdToken();
-  await fetch('/api/auth/session', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token }),
-  });
-  window.location.assign('/employee/dashboard');
-}
+// async function handleSuccessfulLogin(user: any) {
+//   const token = await user.getIdToken();
+//   await fetch('/api/auth/session', {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify({ token }),
+//   });
+//   window.location.assign('/employee/dashboard');
+// }
 
 export default function RegisterClientPage() {
   const router = useRouter();
-  const auth = useAuth();
-  const firestore = useFirestore();
+  // const auth = useAuth();
+  // const firestore = useFirestore();
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError(null);
+    setError("Registration is temporarily disabled.");
+    // setError(null);
 
-    if (!auth || !firestore) {
-      setError("Authentication service is not available.");
-      return;
-    }
+    // if (!auth || !firestore) {
+    //   setError("Authentication service is not available.");
+    //   return;
+    // }
 
-    const name = (event.currentTarget.elements.namedItem("name") as HTMLInputElement).value;
-    const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
-    const password = (event.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
+    // const name = (event.currentTarget.elements.namedItem("name") as HTMLInputElement).value;
+    // const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
+    // const password = (event.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
 
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+    // try {
+    //   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    //   const user = userCredential.user;
 
-      // Update user profile in Firebase Auth
-      await updateProfile(user, { displayName: name });
+    //   // Update user profile in Firebase Auth
+    //   await updateProfile(user, { displayName: name });
       
-      // Create user profile in Firestore
-      const userProfile = {
-        name: name,
-        email: email,
-        role: 'employee',
-        avatarUrl: `https://avatar.vercel.sh/${email}.png`,
-        points: 0,
-      };
+    //   // Create user profile in Firestore
+    //   const userProfile = {
+    //     name: name,
+    //     email: email,
+    //     role: 'employee',
+    //     avatarUrl: `https://avatar.vercel.sh/${email}.png`,
+    //     points: 0,
+    //   };
 
-      await setDoc(doc(firestore, "users", user.uid), userProfile);
+    //   await setDoc(doc(firestore, "users", user.uid), userProfile);
       
-      // Set role as custom claim
-      // This part needs to be done on the backend, for now we will set the session and redirect
+    //   // Set role as custom claim
+    //   // This part needs to be done on the backend, for now we will set the session and redirect
       
-      await handleSuccessfulLogin(user);
+    //   await handleSuccessfulLogin(user);
 
-    } catch (e: any) {
-      setError(e.message);
-    }
+    // } catch (e: any) {
+    //   setError(e.message);
+    // }
   };
 
   return (
