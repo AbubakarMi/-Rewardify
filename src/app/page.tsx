@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Award, Zap, Users, Gift, ArrowRight, Star, TrendingUp } from 'lucide-react';
 import RotatingText from '@/components/ui/RotatingText';
+import Lanyard from '@/components/ui/Lanyard';
+import { Suspense } from 'react';
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
   <div className="flex flex-col items-center p-6 text-center transition-transform duration-300 transform bg-card border rounded-xl shadow-sm hover:-translate-y-2">
@@ -25,7 +27,7 @@ const HowItWorksCard = ({ icon, step, title, description }: { icon: React.ReactN
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 text-foreground">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg">
         <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center gap-2">
@@ -91,29 +93,39 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="features" className="py-20">
-          <div className="container mx-auto px-4">
-            <div className="mb-12 text-center">
-              <h2 className="font-headline text-3xl font-bold">Why Choose Rewardify?</h2>
-              <p className="text-muted-foreground">Everything you need to run a successful rewards program.</p>
-            </div>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-              <FeatureCard
-                icon={<Zap className="h-8 w-8" />}
-                title="Instant Recognition"
-                description="Immediately issue points, badges, or gift cards to individuals or teams for their hard work."
-              />
-              <FeatureCard
-                icon={<Users className="h-8 w-8" />}
-                title="Boost Engagement"
-                description="Create a fun and competitive environment with leaderboards and transparent reward tracking."
-              />
-              <FeatureCard
-                icon={<Gift className="h-8 w-8" />}
-                title="Flexible Rewards"
-                description="Offer a customizable catalog of rewards, from gift cards to company-specific perks."
-              />
-            </div>
+        <section id="features" className="py-20 bg-slate-50">
+          <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <FeatureCard
+                  icon={<Zap className="h-8 w-8" />}
+                  title="Instant Recognition"
+                  description="Immediately issue points, badges, or gift cards to individuals or teams for their hard work."
+                />
+                <FeatureCard
+                  icon={<Users className="h-8 w-8" />}
+                  title="Boost Engagement"
+                  description="Create a fun and competitive environment with leaderboards and transparent reward tracking."
+                />
+                 <FeatureCard
+                  icon={<Gift className="h-8 w-8" />}
+                  title="Flexible Rewards"
+                  description="Offer a customizable catalog of rewards, from gift cards to company-specific perks."
+                />
+                 <FeatureCard
+                  icon={<TrendingUp className="h-8 w-8" />}
+                  title="Track & Compete"
+                  description="Employees watch their points grow, see their recent accolades, and climb the company-wide leaderboard."
+                />
+              </div>
+              <div className="relative h-[500px] w-full">
+                  <div className="mb-8 text-left">
+                    <h2 className="font-headline text-3xl font-bold">Why Choose Rewardify?</h2>
+                    <p className="text-muted-foreground mt-2">Everything you need to run a successful rewards program.</p>
+                  </div>
+                 <Suspense fallback={<div className="w-full h-full bg-slate-200 animate-pulse rounded-lg" />}>
+                   <Lanyard position={[0, -2, 20]} gravity={[0, -40, 0]} />
+                 </Suspense>
+              </div>
           </div>
         </section>
 
