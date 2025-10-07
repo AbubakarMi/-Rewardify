@@ -9,7 +9,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { users } from "@/lib/data";
 import { EmployeeActions } from "@/components/admin/EmployeeActions";
 import { AddEmployeeDialog } from "@/components/admin/AddEmployeeDialog";
 import { AppLayout } from "@/components/AppLayout";
@@ -23,6 +22,8 @@ import {
   History,
   Settings,
 } from "lucide-react";
+import { useCollection } from "@/firebase";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const adminNavItems = [
   { href: "/admin/dashboard", icon: <LayoutDashboard />, label: "Dashboard" },
@@ -36,8 +37,32 @@ const adminSecondaryNavItems = [
   { href: "#", icon: <Settings />, label: "Settings" },
 ];
 
+function EmployeeRowSkeleton() {
+  return (
+    <TableRow>
+      <TableCell>
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-9 w-9 rounded-full" />
+          <Skeleton className="h-4 w-32" />
+        </div>
+      </TableCell>
+      <TableCell>
+        <Skeleton className="h-4 w-48" />
+      </TableCell>
+      <TableCell className="text-right">
+        <Skeleton className="h-4 w-12" />
+      </TableCell>
+      <TableCell className="text-right">
+        <Skeleton className="h-8 w-8" />
+      </TableCell>
+    </TableRow>
+  );
+}
+
 export default function EmployeesPage() {
-    const employeeList = users.filter(u => u.role === 'employee');
+    const { data: users, loading } = useCollection<User>('users');
+    const employeeList = users?.filter(u => u.role === 'employee');
+    
     return (
     <AppLayout
       user={currentUser as User}
@@ -64,7 +89,14 @@ export default function EmployeesPage() {
                   </TableRow>
               </TableHeader>
               <TableBody>
-              {employeeList.map((user) => (
+              {loading && (
+                <>
+                  <EmployeeRowSkeleton />
+                  <EmployeeRowSkeleton />
+                  <EmployeeRowSkeleton />
+                </>
+              )}
+              {!loading && employeeList && employeeList.length > 0 && employeeList.map((user) => (
                   <TableRow key={user.id}>
                       <TableCell>
                           <div className="flex items-center gap-3">
@@ -82,6 +114,13 @@ export default function EmployeesPage() {
                       </TableCell>
                   </TableRow>
               ))}
+              {!loading && (!employeeList || employeeList.length === 0) && (
+                <TableRow>
+                  <TableCell colSpan={4} className="h-24 text-center">
+                    No employees found.
+                  </TableCell>
+                </TableRow>
+              )}
               </TableBody>
           </Table>
           </CardContent>
