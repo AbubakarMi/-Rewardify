@@ -21,7 +21,7 @@ import {
   History,
   Settings,
 } from "lucide-react";
-import { useCollection, useUser } from "@/firebase";
+import { useCollection, FirebaseClientProvider } from "@/firebase";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const adminNavItems = [
@@ -58,7 +58,7 @@ function EmployeeRowSkeleton() {
   );
 }
 
-export default function EmployeesPage() {
+function EmployeesContent() {
     const { data: users, loading } = useCollection<User>('users');
     const employeeList = users?.filter(u => u.role === 'employee');
     
@@ -126,4 +126,12 @@ export default function EmployeesPage() {
       </div>
     </AppLayout>
   );
+}
+
+export default function EmployeesPage() {
+    return (
+        <FirebaseClientProvider>
+            <EmployeesContent />
+        </FirebaseClientProvider>
+    )
 }

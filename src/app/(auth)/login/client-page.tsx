@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -16,95 +16,98 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Award, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-// import { useAuth, useFirestore } from "@/firebase";
-// import {
-//   signInWithEmailAndPassword,
-//   GoogleAuthProvider,
-//   signInWithPopup,
-// } from "firebase/auth";
-// import { getDoc, doc } from "firebase/firestore";
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  type Auth,
+} from "firebase/auth";
+import { getDoc, doc, type Firestore } from "firebase/firestore";
+import { useAuth, useFirestore } from "@/firebase";
 
-// async function getRedirectPath(user: any, firestore: any): Promise<string> {
-//   const userDoc = await getDoc(doc(firestore, "users", user.uid));
-//   if (userDoc.exists()) {
-//     const userData = userDoc.data();
-//     if (userData.role === 'admin') {
-//       return "/admin/dashboard";
-//     }
-//   }
-//   return "/employee/dashboard";
-// }
+async function getRedirectPath(user: any, firestore: Firestore): Promise<string> {
+  const userDocRef = doc(firestore, "users", user.uid);
+  const userDoc = await getDoc(userDocRef);
+  if (userDoc.exists()) {
+    const userData = userDoc.data();
+    if (userData.role === 'admin') {
+      return "/admin/dashboard";
+    }
+  }
+  return "/employee/dashboard";
+}
 
-// async function handleSuccessfulLogin(user: any, firestore: any) {
-//     const token = await user.getIdToken();
-//     const idTokenResult = await user.getIdTokenResult();
-//     const redirectPath = await getRedirectPath(user, firestore);
+async function handleSuccessfulLogin(user: any, firestore: Firestore) {
+    const token = await user.getIdToken();
+    await fetch("/api/auth/session", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+    });
 
-//     await fetch("/api/auth/session", {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ token }),
-//     });
-
-//     // Redirect after session is set
-//     window.location.assign(redirectPath);
-// }
+    const redirectPath = await getRedirectPath(user, firestore);
+    window.location.assign(redirectPath);
+}
 
 
 export default function LoginClientPage() {
   const router = useRouter();
-  // const auth = useAuth();
-  // const firestore = useFirestore();
+  const auth = useAuth();
+  const firestore = useFirestore();
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError("Login is temporarily disabled.");
-    // setError(null);
-    // if (!auth || !firestore) {
-    //   setError("Authentication service is not available.");
-    //   return;
-    // }
+    setError(null);
+    if (!auth || !firestore) {
+      setError("Authentication service is not available.");
+      return;
+    }
 
-    // const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
-    // const password = (event.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
+    const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (event.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
 
-    // try {
-    //   const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    //   await handleSuccessfulLogin(userCredential.user, firestore);
-    // } catch (e: any) {
-    //   setError(e.message);
-    // }
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      await handleSuccessfulLogin(userCredential.user, firestore);
+    } catch (e: any) {
+      let errorMessage = "An unknown error occurred.";
+      if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
+        errorMessage = "Invalid email or password. Please try again.";
+      } else {
+        errorMessage = e.message;
+      }
+      setError(errorMessage);
+    }
   };
 
   const handleGoogleSignIn = async () => {
-    setError("Login is temporarily disabled.");
-    // setError(null);
-    // if (!auth || !firestore) {
-    //   setError("Authentication service is not available.");
-    //   return;
-    // }
-    // const provider = new GoogleAuthProvider();
-    // try {
-    //   const userCredential = await signInWithPopup(auth, provider);
-    //   await handleSuccessfulLogin(userCredential.user, firestore);
-    // } catch (e: any) {
-    //   setError(e.message);
-    // }
+    setError(null);
+    if (!auth || !firestore) {
+      setError("Authentication service is not available.");
+      return;
+    }
+    const provider = new GoogleAuthProvider();
+    try {
+      const userCredential = await signInWithPopup(auth, provider);
+      await handleSuccessfulLogin(userCredential.user, firestore);
+    } catch (e: any) {
+       setError(e.message);
+    }
   };
 
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-secondary">
-      <Card className="w-full max-w-md shadow-2xl">
+    <div className="dark flex min-h-screen items-center justify-center bg-background">
+      <Card className="w-full max-w-md border-border/50 shadow-2xl">
         <CardHeader className="text-center">
           <div className="mb-4 flex justify-center">
             <Award className="h-12 w-12 text-primary" />
           </div>
-          <CardTitle className="font-headline text-3xl">Welcome to Rewardify</CardTitle>
-          <CardDescription>Sign in to your account to continue</CardDescription>
+          <CardTitle className="font-headline text-3xl">Welcome Back</CardTitle>
+          <CardDescription>Sign in to your Rewardify account</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -116,7 +119,7 @@ export default function LoginClientPage() {
             )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="m@example.com" defaultValue="testadmin@example.com" required />
+              <Input id="email" type="email" placeholder="admin@example.com" defaultValue="testadmin@example.com" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>

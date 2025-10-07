@@ -1,15 +1,15 @@
 'use client';
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { rewards as allRewards, users } from "@/lib/data";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { Reward } from "@/lib/types";
+import type { Reward, User } from "@/lib/types";
 import { format } from "date-fns";
 import { Award, Gift, Star } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
-import { useUser } from "@/firebase";
-import type { User } from "@/lib/types";
+import { FirebaseClientProvider, useCollection } from "@/firebase";
+import { Skeleton } from "@/components/ui/skeleton";
+
 import {
   LayoutDashboard,
   Users as UsersIcon,
@@ -38,8 +38,7 @@ const iconMap = {
     'gift-card': <Gift className="h-5 w-5 text-green-500" />,
 };
   
-function AdminRewardItem({ reward }: { reward: Reward }) {
-    const user = users.find(u => u.id === reward.userId);
+function AdminRewardItem({ reward, user }: { reward: Reward, user: User | undefined }) {
     if (!user) return null;
 
     return (
@@ -61,10 +60,12 @@ function AdminRewardItem({ reward }: { reward: Reward }) {
     );
 }
 
-export default function RewardHistoryPage() {
-    const sortedRewards = [...allRewards].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    const { user } = useUser();
+function RewardHistoryContent() {
+    const { data: rewards, loading: rewardsLoading } = useCollection<Reward>("rewards");
+    const { data: users, loading: usersLoading } = useCollection<User>("users");
 
+    const sortedRewards = rewards ? [...rewards].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()) : [];
+    
     return (
       <AppLayout
         navItems={adminNavItems}
@@ -78,13 +79,32 @@ export default function RewardHistoryPage() {
             <Card>
                 <CardContent className="p-0">
                     <div className="divide-y divide-border">
-                        {sortedRewards.map((reward) => (
-                            <AdminRewardItem key={reward.id} reward={reward} />
-                        ))}
+                        {(rewardsLoading || usersLoading) && (
+                          <div className="p-4 space-y-4">
+                            <Skeleton className="h-12 w-full" />
+                            <Skeleton className="h-12 w-full" />
+                            <Skeleton className="h-12 w-full" />
+                          </div>
+                        )}
+                        {!rewardsLoading && !usersLoading && sortedRewards.map((reward) => {
+                          const user = users?.find(u => u.id === reward.userId);
+                          return <AdminRewardItem key={reward.id} reward={reward} user={user} />
+                        })}
+                         {!rewardsLoading && sortedRewards.length === 0 && (
+                            <p className="p-6 text-center text-muted-foreground">No reward history found.</p>
+                         )}
                     </div>
                 </CardContent>
             </Card>
         </div>
       </AppLayout>
+    )
+}
+
+export default function RewardHistoryPage() {
+    return (
+        <FirebaseClientProvider>
+            <RewardHistoryContent />
+        </FirebaseClientProvider>
     )
 }

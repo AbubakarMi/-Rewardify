@@ -1,7 +1,10 @@
 import type { User, Reward, LeaderboardEntry, GiftCard } from './types';
-import { PlaceHolderImages } from './placeholder-images';
+import { placeholderImages } from './placeholder-images';
 
-const findImage = (id: string) => PlaceHolderImages.find(img => img.id === id);
+const findImage = (id: string) => placeholderImages.find(img => img.id === id);
+
+// This file contains mock data and is no longer the primary source of truth.
+// Data is now fetched from Firestore. This can be used for reference or seeding.
 
 export const users: User[] = [
   { id: '1', name: 'Alice Johnson', email: 'alice@example.com', role: 'employee', avatarUrl: findImage('user1')?.imageUrl ?? '', points: 1250 },
@@ -12,9 +15,6 @@ export const users: User[] = [
   { id: '6', name: 'Frank White', email: 'frank@example.com', role: 'employee', avatarUrl: findImage('user5')?.imageUrl ?? '', points: 800 },
 ];
 
-export const currentUser: User = users[4];
-export const currentEmployee: User = users[0];
-
 export const rewards: Reward[] = [
   { id: 'r1', userId: '1', type: 'badge', value: 'Team Player', description: 'For exceptional collaboration on the Q2 project.', date: '2023-06-15T10:00:00Z' },
   { id: 'r2', userId: '1', type: 'points', value: 100, description: 'Outstanding presentation to stakeholders.', date: '2023-06-20T14:30:00Z' },
@@ -23,17 +23,6 @@ export const rewards: Reward[] = [
   { id: 'r5', userId: '3', type: 'points', value: 50, description: 'Perfect attendance for Q2.', date: '2023-07-02T16:00:00Z' },
   { id: 'r6', userId: '1', type: 'points', value: 200, description: 'Lead generation record.', date: '2023-07-10T09:00:00Z' },
 ];
-
-export const leaderboard: LeaderboardEntry[] = users
-  .filter(u => u.role === 'employee')
-  .sort((a, b) => b.points - a.points)
-  .map((user, index) => ({
-    rank: index + 1,
-    userId: user.id,
-    name: user.name,
-    avatarUrl: user.avatarUrl,
-    points: user.points,
-  }));
 
 export const giftCards: GiftCard[] = [
   { id: 'gc1', name: 'Amazon Gift Card', value: 10, pointsCost: 1000, imageUrl: findImage('amazon')?.imageUrl ?? '', imageHint: findImage('amazon')?.imageHint ?? '' },

@@ -2,12 +2,12 @@
 import React from "react";
 import { StatCard } from "@/components/StatCard";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { rewards as allRewards, leaderboard } from "@/lib/data";
 import { Star, Trophy, Gift, Settings, LayoutDashboard } from "lucide-react";
 import { RewardItem } from "@/components/RewardItem";
 import { AppLayout } from "@/components/AppLayout";
-import type { User } from "@/lib/types";
-import { useUser, useDoc } from "@/firebase";
+import type { User, Reward, LeaderboardEntry } from "@/lib/types";
+import { useUser, useDoc, useCollection, FirebaseClientProvider } from "@/firebase";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const employeeNavItems = [
   { href: "/employee/dashboard", icon: <LayoutDashboard />, label: "Dashboard" },
@@ -19,10 +19,26 @@ const employeeSecondaryNavItems = [
     { href: "#", icon: <Settings />, label: "Settings" },
 ];
 
+function EmployeeDashboardContent() {
+    const { user, loading: userLoading } = useUser();
+    const { data: employee, loading: employeeLoading } = useDoc<User>(user ? `users/${user.uid}` : '');
+    const { data: allRewards, loading: rewardsLoading } = useCollection<Reward>('rewards', 'userId', user?.uid);
+    const { data: users, loading: usersLoading } = useCollection<User>('users');
 
-export default function EmployeeDashboardPage() {
-    const { user } = useUser();
-    const { data: employee, loading } = useDoc<User>(user ? `users/${user.uid}` : '');
+    const leaderboard: LeaderboardEntry[] = users
+      ? users
+        .filter(u => u.role === 'employee')
+        .sort((a, b) => b.points - a.points)
+        .map((u, index) => ({
+          rank: index + 1,
+          userId: u.id,
+          name: u.name,
+          avatarUrl: u.avatarUrl,
+          points: u.points,
+        }))
+      : [];
+
+    const loading = userLoading || employeeLoading || rewardsLoading || usersLoading;
 
     if (loading || !employee) {
         return (
@@ -30,14 +46,22 @@ export default function EmployeeDashboardPage() {
                 navItems={employeeNavItems}
                 secondaryNavItems={employeeSecondaryNavItems}
             >
-                <div>Loading...</div>
+                <div className="space-y-6">
+                  <div>
+                    <Skeleton className="h-9 w-64" />
+                    <Skeleton className="mt-2 h-5 w-80" />
+                  </div>
+                   <div className="grid gap-4 md:grid-cols-2">
+                      <Skeleton className="h-32 w-full" />
+                      <Skeleton className="h-32 w-full" />
+                   </div>
+                   <Skeleton className="h-64 w-full" />
+                </div>
              </AppLayout>
         )
     }
 
-    const userRewards = allRewards
-        .filter(r => r.userId === employee.id)
-        .sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const userRewards = allRewards?.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()) ?? [];
     const userRank = leaderboard.find(e => e.userId === employee.id)?.rank;
     const displayName = employee.name.split(' ')[0];
 
@@ -62,7 +86,7 @@ export default function EmployeeDashboardPage() {
                     title="Leaderboard Rank"
                     value={userRank ? `#${userRank}` : "N/A"}
                     icon={<Trophy className="h-5 w-5 text-muted-foreground" />}
-                    description={`out of ${leaderboard.length} employees`}
+                    description={leaderboard.length > 0 ? `out of ${leaderboard.length} employees` : ""}
                 />
             </div>
             <Card>
@@ -77,12 +101,20 @@ export default function EmployeeDashboardPage() {
                               <RewardItem key={reward.id} reward={reward} />
                           ))
                         ) : (
-                          <p className="p-6 text-sm text-muted-foreground">You haven't received any rewards yet.</p>
+                          <p className="p-6 text-sm text-center text-muted-foreground">You haven't received any rewards yet.</p>
                         )}
                     </div>
                 </CardContent>
             </Card>
         </div>
       </AppLayout>
+    )
+}
+
+export default function EmployeeDashboardPage() {
+    return (
+        <FirebaseClientProvider>
+            <EmployeeDashboardContent />
+        </FirebaseClientProvider>
     )
 }

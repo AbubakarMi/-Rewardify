@@ -1,7 +1,7 @@
 'use client';
 import { StatCard } from "@/components/StatCard";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { users, rewards } from "@/lib/data";
+import { useCollection } from "@/firebase";
 import { Users, Award, Activity, Lightbulb } from "lucide-react";
 import { summarizeRewardData } from "@/ai/flows/summarize-reward-data";
 import { Suspense } from "react";
@@ -15,7 +15,8 @@ import {
   History,
   Settings,
 } from "lucide-react";
-import { useUser } from "@/firebase";
+import { FirebaseClientProvider } from "@/firebase";
+import type { User, Reward } from "@/lib/types";
 
 const adminNavItems = [
   { href: "/admin/dashboard", icon: <LayoutDashboard />, label: "Dashboard" },
@@ -63,11 +64,13 @@ function AISummarySkeleton() {
   )
 }
 
-export default function AdminDashboardPage() {
-  const totalEmployees = users.filter(u => u.role === 'employee').length;
-  const rewardsIssued = rewards.length;
-  const totalPoints = rewards.filter(r => r.type === 'points').reduce((sum, r) => sum + (r.value as number), 0);
-  const { user } = useUser();
+function AdminDashboardContent() {
+  const { data: users, loading: usersLoading } = useCollection<User>('users');
+  const { data: rewards, loading: rewardsLoading } = useCollection<Reward>('rewards');
+
+  const totalEmployees = users?.filter(u => u.role === 'employee').length ?? 0;
+  const rewardsIssued = rewards?.length ?? 0;
+  const totalPoints = rewards?.filter(r => r.type === 'points').reduce((sum, r) => sum + (r.value as number), 0) ?? 0;
 
   return (
     <AppLayout
@@ -80,9 +83,9 @@ export default function AdminDashboardPage() {
           <p className="text-muted-foreground">An overview of your rewards program.</p>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <StatCard title="Total Employees" value={totalEmployees.toString()} icon={<Users className="h-5 w-5 text-muted-foreground" />} />
-          <StatCard title="Rewards Issued (All Time)" value={rewardsIssued.toString()} icon={<Award className="h-5 w-5 text-muted-foreground" />} />
-          <StatCard title="Total Points Awarded" value={totalPoints.toLocaleString()} icon={<Activity className="h-5 w-5 text-muted-foreground" />} />
+          <StatCard title="Total Employees" value={usersLoading ? '...' : totalEmployees.toString()} icon={<Users className="h-5 w-5 text-muted-foreground" />} />
+          <StatCard title="Rewards Issued (All Time)" value={rewardsLoading ? '...' : rewardsIssued.toString()} icon={<Award className="h-5 w-5 text-muted-foreground" />} />
+          <StatCard title="Total Points Awarded" value={rewardsLoading ? '...' : totalPoints.toLocaleString()} icon={<Activity className="h-5 w-5 text-muted-foreground" />} />
         </div>
         <div>
           <Suspense fallback={<AISummarySkeleton />}>
@@ -91,5 +94,14 @@ export default function AdminDashboardPage() {
         </div>
       </div>
     </AppLayout>
+  )
+}
+
+
+export default function AdminDashboardPage() {
+  return (
+    <FirebaseClientProvider>
+      <AdminDashboardContent />
+    </FirebaseClientProvider>
   )
 }

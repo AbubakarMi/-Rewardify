@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
 import { AppLayout } from "@/components/AppLayout";
-import { useUser } from "@/firebase";
+import { FirebaseClientProvider } from "@/firebase";
 import {
   LayoutDashboard,
   Trophy,
@@ -20,8 +20,7 @@ const employeeSecondaryNavItems = [
     { href: "#", icon: <Settings />, label: "Settings" },
 ];
 
-export default function LeaderboardPage() {
-  const { user } = useUser();
+function LeaderboardContent() {
   return (
     <AppLayout
       navItems={employeeNavItems}
@@ -40,4 +39,13 @@ export default function LeaderboardPage() {
       </div>
     </AppLayout>
   );
+}
+
+
+export default function LeaderboardPage() {
+    return (
+        <FirebaseClientProvider>
+            <LeaderboardContent />
+        </FirebaseClientProvider>
+    )
 }
