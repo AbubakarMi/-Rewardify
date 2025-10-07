@@ -40,9 +40,9 @@ export default function LandingPage() {
 
       <main className="flex-1">
         <section className="bg-white">
-          <div className="container mx-auto grid items-center gap-12 px-4 py-20 md:grid-cols-2 md:py-32">
-            <div className="space-y-6 text-center md:text-left">
-              <div className="mb-4 flex justify-center md:justify-start">
+          <div className="container mx-auto grid items-center gap-12 px-4 py-20 md:grid-cols-1 md:py-32">
+            <div className="space-y-6 text-center">
+              <div className="mb-4 flex justify-center">
                   <div className="flex items-center gap-2 px-4 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded-full">
                       <Star className="w-4 h-4 text-blue-500 fill-current" />
                       <span>Trusted by over 1,000+ companies</span>
@@ -51,10 +51,10 @@ export default function LandingPage() {
               <h2 className="font-headline text-4xl font-extrabold tracking-tight md:text-5xl lg:text-6xl">
                 Recognize Excellence. Inspire Growth.
               </h2>
-              <p className="mx-auto max-w-2xl text-lg text-muted-foreground md:mx-0">
+              <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
                 Rewardify is the ultimate platform to motivate your team, celebrate achievements, and foster a culture of recognition that drives results.
               </p>
-              <div className="flex flex-col gap-4 sm:flex-row justify-center md:justify-start">
+              <div className="flex flex-col gap-4 sm:flex-row justify-center">
                 <Button size="lg" asChild>
                   <Link href="/register">Get Started for Free</Link>
                 </Button>
@@ -62,9 +62,6 @@ export default function LandingPage() {
                   Request a Demo
                 </Button>
               </div>
-            </div>
-            <div className="relative h-80 w-full rounded-lg bg-gray-200 md:h-96">
-                <Image src="https://picsum.photos/seed/hero-image/800/800" alt="Team celebrating success" layout="fill" className="object-cover rounded-2xl shadow-lg" data-ai-hint="team achievement" />
             </div>
           </div>
         </section>
@@ -101,7 +98,7 @@ export default function LandingPage() {
                     <h2 className="font-headline text-3xl font-bold">How It Works</h2>
                     <p className="text-muted-foreground">A simple, intuitive process for recognition.</p>
                 </div>
-                <div className="grid items-center gap-12 md:grid-cols-2">
+                <div className="max-w-3xl mx-auto">
                     <div className="space-y-8">
                         <div className="flex gap-4">
                             <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary text-white font-bold text-lg">1</div>
@@ -124,9 +121,6 @@ export default function LandingPage() {
                                 <p className="text-muted-foreground">Points can be redeemed for a variety of popular gift cards from our curated catalog.</p>
                             </div>
                         </div>
-                    </div>
-                     <div className="relative h-80 w-full rounded-lg bg-gray-200">
-                        <Image src="https://picsum.photos/seed/workspace/800/600" alt="Dashboard Illustration" layout="fill" className="object-cover rounded-lg shadow-lg" data-ai-hint="office workspace" />
                     </div>
                 </div>
             </div>
