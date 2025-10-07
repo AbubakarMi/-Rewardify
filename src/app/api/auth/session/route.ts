@@ -3,6 +3,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import admin from 'firebase-admin';
 import { getAuth } from "firebase-admin/auth";
 
+// Force the route to run on the Node.js runtime.
+export const runtime = 'nodejs';
+
 function initializeAdminApp() {
   if (admin.apps.length > 0) {
     return admin.app();
