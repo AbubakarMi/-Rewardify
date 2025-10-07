@@ -15,10 +15,6 @@ import {
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import * as THREE from 'three';
 
-// replace with your own imports, see the usage snippet for details
-import cardGLB from '@/assets/lanyard/card.glb';
-import lanyard from '@/assets/lanyard/lanyard.png';
-
 extend({ MeshLineGeometry, MeshLineMaterial });
 
 interface LanyardProps {
@@ -29,7 +25,7 @@ interface LanyardProps {
 }
 
 export default function Lanyard({
-  position = [0, 0, 30],
+  position = [0, -2, 20],
   gravity = [0, -40, 0],
   fov = 20,
   transparent = true
@@ -107,8 +103,8 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
     linearDamping: 4
   };
 
-  const { nodes, materials } = useGLTF(cardGLB) as any;
-  const texture = useTexture(lanyard);
+  const { nodes, materials } = useGLTF('/card.glb') as any;
+  const texture = useTexture('/lanyard.png');
   const [curve] = useState(
     () =>
       new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()])
