@@ -97,7 +97,7 @@ export default function RegisterClientPage() {
           <div className="mb-4 flex justify-center">
             <Award className="h-12 w-12 text-primary" />
           </div>
-          <CardTitle className="font-headline text-3xl">Start Your 3-Day Trial</CardTitle>
+          <CardTitle className="font-headline text-3xl">Start Your 3-Day Free Trial</CardTitle>
           <CardDescription>Create your company account to begin.</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>

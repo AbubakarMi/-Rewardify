@@ -78,11 +78,11 @@ export default function LandingPage() {
                 Inspire Growth.
               </h2>
               <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-                Rewardify is the ultimate platform to motivate your team, celebrate achievements, and foster a culture of recognition that drives results.
+                The ultimate platform to motivate your team and celebrate achievements. Start your 3-day free trial today and foster a culture of recognition that drives results.
               </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <Button size="lg" asChild>
-                  <Link href="/register">Get Started for Free</Link>
+                  <Link href="/register">Start Your 3-Day Free Trial</Link>
                 </Button>
                 <Button size="lg" variant="outline">
                   Request a Demo
@@ -158,7 +158,7 @@ export default function LandingPage() {
             <p className="mx-auto mt-2 max-w-xl opacity-90">Join hundreds of companies building a culture of appreciation and recognition with Rewardify.</p>
             <div className="mt-8">
               <Button size="lg" variant="secondary" asChild className="text-primary hover:bg-slate-200">
-                <Link href="/register">Sign Up for Free Today</Link>
+                <Link href="/register">Sign Up and Start Your Free Trial</Link>
               </Button>
             </div>
           </div>
