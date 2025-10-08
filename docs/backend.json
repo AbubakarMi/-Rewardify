@@ -18,9 +18,17 @@
           "type": "string",
           "format": "date-time",
           "description": "The date when the company's trial period ends."
+        },
+        "industry": {
+          "type": "string",
+          "description": "The industry the company operates in."
+        },
+        "size": {
+          "type": "string",
+          "description": "The size of the company (number of employees)."
         }
       },
-      "required": ["name", "ownerId", "trialEnds"]
+      "required": ["name", "ownerId", "trialEnds", "industry", "size"]
     },
     "UserProfile": {
       "title": "User Profile",
@@ -53,9 +61,13 @@
         "points": {
           "type": "number",
           "description": "Total points accumulated by the user."
+        },
+        "jobTitle": {
+          "type": "string",
+          "description": "The user's job title."
         }
       },
-      "required": ["name", "email", "role", "points", "companyId"]
+      "required": ["name", "email", "role", "points", "companyId", "jobTitle"]
     },
     "Reward": {
       "title": "Reward",
