@@ -138,9 +138,9 @@ export default function LoginClientPage() {
               Google
             </Button>
             <p className="text-sm text-muted-foreground">
-              Don't have an account?{" "}
+              Want to use Rewardify for your team?{" "}
               <Link href="/register" className="font-semibold text-primary hover:underline">
-                Sign Up
+                Create a Company Account
               </Link>
             </p>
           </CardFooter>

@@ -2,7 +2,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,8 +17,9 @@ import { Label } from "@/components/ui/label";
 import { Award, AlertCircle } from "lucide-react";
 import { initializeFirebase } from "@/firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, writeBatch, serverTimestamp } from "firebase/firestore";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { addDays } from "date-fns";
 
 const { auth, firestore } = initializeFirebase();
 
@@ -30,18 +30,18 @@ async function handleSuccessfulLogin(user: any) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token }),
   });
-  window.location.assign('/employee/dashboard');
+  window.location.assign('/admin/dashboard');
 }
 
 export default function RegisterClientPage() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
 
-    const name = (event.currentTarget.elements.namedItem("name") as HTMLInputElement).value;
+    const companyName = (event.currentTarget.elements.namedItem("companyName") as HTMLInputElement).value;
+    const adminName = (event.currentTarget.elements.namedItem("adminName") as HTMLInputElement).value;
     const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
     const password = (event.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
 
@@ -49,19 +49,32 @@ export default function RegisterClientPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Update user profile in Firebase Auth
-      await updateProfile(user, { displayName: name });
+      await updateProfile(user, { displayName: adminName });
       
+      const batch = writeBatch(firestore);
+
+      // Create company document
+      const companyRef = doc(firestore, "companies", user.uid); // Use user UID as company ID for simplicity
+      const trialEnds = addDays(new Date(), 3);
+      batch.set(companyRef, {
+        name: companyName,
+        ownerId: user.uid,
+        createdAt: serverTimestamp(),
+        trialEnds: trialEnds.toISOString(),
+      });
+
       // Create user profile in Firestore
-      const userProfile = {
-        name: name,
+      const userProfileRef = doc(firestore, "users", user.uid);
+      batch.set(userProfileRef, {
+        name: adminName,
         email: email,
-        role: 'employee',
+        role: 'admin',
+        companyId: companyRef.id,
         avatarUrl: `https://avatar.vercel.sh/${email}.png`,
         points: 0,
-      };
+      });
 
-      await setDoc(doc(firestore, "users", user.uid), userProfile);
+      await batch.commit();
       
       await handleSuccessfulLogin(user);
 
@@ -71,6 +84,7 @@ export default function RegisterClientPage() {
       } else if (e.code === 'auth/weak-password') {
         setError("The password is too weak. Please use at least 6 characters.");
       } else {
+        console.error(e);
         setError(e.message);
       }
     }
@@ -83,8 +97,8 @@ export default function RegisterClientPage() {
           <div className="mb-4 flex justify-center">
             <Award className="h-12 w-12 text-primary" />
           </div>
-          <CardTitle className="font-headline text-3xl">Create an Account</CardTitle>
-          <CardDescription>Join Rewardify and start recognizing excellence.</CardDescription>
+          <CardTitle className="font-headline text-3xl">Start Your 3-Day Trial</CardTitle>
+          <CardDescription>Create your company account to begin.</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -95,12 +109,16 @@ export default function RegisterClientPage() {
               </Alert>
             )}
              <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input id="name" type="text" placeholder="John Doe" required />
+              <Label htmlFor="companyName">Company Name</Label>
+              <Input id="companyName" type="text" placeholder="Acme Inc." required />
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="adminName">Your Full Name</Label>
+              <Input id="adminName" type="text" placeholder="John Doe" required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="m@example.com" required />
+              <Label htmlFor="email">Work Email</Label>
+              <Input id="email" type="email" placeholder="john.doe@acme.com" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -109,7 +127,7 @@ export default function RegisterClientPage() {
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button className="w-full font-bold" type="submit">
-              Sign Up
+              Create Account
             </Button>
             <p className="text-sm text-muted-foreground">
               Already have an account?{" "}

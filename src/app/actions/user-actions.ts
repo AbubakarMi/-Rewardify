@@ -4,11 +4,13 @@
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { initializeAdminApp } from '@/firebase/admin-init';
+import { revalidatePath } from 'next/cache';
 
 type CreateEmployeeInput = {
   name: string;
   email: string;
   password?: string;
+  companyId: string;
 };
 
 export async function createEmployeeAction(data: CreateEmployeeInput) {
@@ -29,6 +31,7 @@ export async function createEmployeeAction(data: CreateEmployeeInput) {
       name: data.name,
       email: data.email,
       role: 'employee',
+      companyId: data.companyId,
       avatarUrl: userRecord.photoURL || `https://avatar.vercel.sh/${userRecord.email}.png`,
       points: 0,
     };
@@ -36,8 +39,9 @@ export async function createEmployeeAction(data: CreateEmployeeInput) {
     await firestore.collection('users').doc(userRecord.uid).set(userProfile);
     
     // Set custom claim for role-based access control
-    await auth.setCustomUserClaims(userRecord.uid, { role: 'employee' });
-
+    await auth.setCustomUserClaims(userRecord.uid, { role: 'employee', companyId: data.companyId });
+    
+    revalidatePath('/admin/employees');
     return { uid: userRecord.uid };
   } catch (error: any) {
     console.error('Error creating employee:', error);

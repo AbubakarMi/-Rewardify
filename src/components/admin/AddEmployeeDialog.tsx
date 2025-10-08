@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -26,6 +27,9 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { createEmployeeAction } from "@/app/actions/user-actions";
+import { useUser } from "@/firebase";
+import { useDoc } from "@/firebase";
+import type { User } from "@/lib/types";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -36,6 +40,8 @@ const formSchema = z.object({
 export function AddEmployeeDialog() {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
+  const { user: authUser } = useUser();
+  const { data: adminUser } = useDoc<User>(authUser ? `users/${authUser.uid}` : '');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,8 +53,17 @@ export function AddEmployeeDialog() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!adminUser || !adminUser.companyId) {
+       toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not determine your company ID.",
+      });
+      return;
+    }
+
     try {
-      const result = await createEmployeeAction(values);
+      const result = await createEmployeeAction({ ...values, companyId: adminUser.companyId });
       if (result.error) {
         throw new Error(result.error);
       }
@@ -80,7 +95,7 @@ export function AddEmployeeDialog() {
         <DialogHeader>
           <DialogTitle>Add New Employee</DialogTitle>
           <DialogDescription>
-            Fill in the details to add a new employee to the system. An email
+            Fill in the details to add a new employee to your company. An email
             and temporary password are required for them to log in.
           </DialogDescription>
         </DialogHeader>

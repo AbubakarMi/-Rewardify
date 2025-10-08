@@ -1,3 +1,11 @@
+
+export type Company = {
+  id: string;
+  name: string;
+  ownerId: string;
+  trialEnds: string; // ISO date string
+}
+
 export type User = {
   id: string;
   name: string;
@@ -5,15 +13,17 @@ export type User = {
   role: 'admin' | 'employee';
   avatarUrl: string;
   points: number;
+  companyId: string;
 };
 
 export type Reward = {
   id: string;
   userId: string;
+  companyId: string;
   type: 'points' | 'badge' | 'gift-card';
   value: number | string;
   description: string;
-  date: string;
+  date: string; // ISO date string
 };
 
 export type LeaderboardEntry = {
@@ -31,4 +41,5 @@ export type GiftCard = {
   pointsCost: number;
   imageUrl: string;
   imageHint: string;
+  companyId?: string; // Optional: for company-specific gift cards
 };

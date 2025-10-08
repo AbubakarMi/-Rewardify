@@ -1,5 +1,27 @@
+
 {
   "entities": {
+    "Company": {
+      "title": "Company",
+      "description": "Represents a tenant company in the application.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the company."
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "The UID of the user who owns/created the company."
+        },
+        "trialEnds": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date when the company's trial period ends."
+        }
+      },
+      "required": ["name", "ownerId", "trialEnds"]
+    },
     "UserProfile": {
       "title": "User Profile",
       "description": "Represents a user's profile in the system.",
@@ -19,6 +41,10 @@
           "enum": ["admin", "employee"],
           "description": "The user's role."
         },
+        "companyId": {
+          "type": "string",
+          "description": "The ID of the company the user belongs to."
+        },
         "avatarUrl": {
           "type": "string",
           "format": "uri",
@@ -29,7 +55,7 @@
           "description": "Total points accumulated by the user."
         }
       },
-      "required": ["name", "email", "role", "points"]
+      "required": ["name", "email", "role", "points", "companyId"]
     },
     "Reward": {
       "title": "Reward",
@@ -39,6 +65,10 @@
         "userId": {
           "type": "string",
           "description": "The ID of the user who received the reward."
+        },
+        "companyId": {
+          "type": "string",
+          "description": "The ID of the company this reward belongs to."
         },
         "type": {
           "type": "string",
@@ -59,7 +89,7 @@
           "description": "The date the reward was issued."
         }
       },
-      "required": ["userId", "type", "value", "description", "date"]
+      "required": ["userId", "type", "value", "description", "date", "companyId"]
     },
     "GiftCard": {
       "title": "Gift Card",
@@ -81,6 +111,10 @@
         },
         "imageHint": {
           "type": "string"
+        },
+        "companyId": {
+           "type": "string",
+           "description": "ID of a company for company-specific gift cards. If null, it's globally available."
         }
       },
       "required": ["name", "value", "pointsCost", "imageUrl"]
@@ -90,6 +124,12 @@
     "providers": ["google.com", "password"]
   },
   "firestore": {
+    "/companies/{companyId}": {
+      "schema": {
+        "$ref": "#/entities/Company"
+      },
+      "description": "Stores company information."
+    },
     "/users/{userId}": {
       "schema": {
         "$ref": "#/entities/UserProfile"
